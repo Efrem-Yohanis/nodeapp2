@@ -16,10 +16,10 @@ connectToDb((error)=>{
 })
 
 
-app.get('/api/v1/books',(req,res)=>{
+app.get('/api/v1/getAllUser',(req,res)=>{
    let books =[];
 
-   db.collection('bookstore').find().forEach(book => {
+   db.collection('user').find().forEach(book => {
       books.push(book)
    }).then(()=>{
       res.status(200).json(books)
@@ -29,9 +29,9 @@ app.get('/api/v1/books',(req,res)=>{
   
 })
 
-app.get('/api/v1/books/:id',(req,res)=>{
+app.get('/api/v1/getUserByID/:id',(req,res)=>{
    if(ObjectId.isValid(req.params.id)){
-      db.collection('bookstore').findOne({_id: new ObjectId(req.params.id)})
+      db.collection('user').findOne({_id: new ObjectId(req.params.id)})
       .then((data)=>{
          res.status(200).json(data)
       })
@@ -43,21 +43,19 @@ app.get('/api/v1/books/:id',(req,res)=>{
    }
 })
 
-app.post('/api/v1/books',(req,res)=>{
-   const book = req.body
-   db.collection('bookstore').insertOne(book).then((result)=>{
-
-      const mergedJSON = Object.assign({}, book, result);
-
-      res.status(201).json(book)
+app.post('/api/v1/addUser',(req,res)=>{
+   const user = req.body
+   db.collection('user').insertOne(user).then((result)=>{
+      const mergedJSON = Object.assign({}, user, result);
+      res.status(201).json(mergedJSON)
    }).catch(err=>{
       res.status(500).json({err:"could not able to create data"})
    })
 })
 
-app.delete('/api/v1/books/:id',(req,res)=>{
+app.delete('/api/v1/DeleteUser/:id',(req,res)=>{
    if(ObjectId.isValid(req.params.id)){
-      db.collection('bookstore').deleteOne({_id: new ObjectId(req.params.id)})
+      db.collection('user').deleteOne({_id: new ObjectId(req.params.id)})
       .then((result)=>{
          res.status(200).json(result)
       })
@@ -70,7 +68,7 @@ app.delete('/api/v1/books/:id',(req,res)=>{
 })
 
 
-app.patch('/api/v1/books/:id',(req,res)=>{
+app.put('/api/v1/books/:id',(req,res)=>{
    const update = req.body
    if(ObjectId.isValid(req.params.id)){
       db.collection('bookstore').updateOne({_id: new ObjectId(req.params.id)},{$set: update})
